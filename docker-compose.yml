@@ -1,0 +1,21 @@
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: finops-backend
+
+    ports:
+      - "8002:8000"
+
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_SDK_LOAD_CONFIG: "1"
+      AWS_CONFIG_FILE: /home/appuser/.aws/config
+
+    volumes:
+      - ${HOME}/.aws/config:/home/appuser/.aws/config:ro
+      - ${HOME}/.aws/sso/cache:/home/appuser/.aws/sso/cache:rw
+
+    restart: unless-stopped
+

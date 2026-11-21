@@ -1,0 +1,28 @@
+services:
+  human-resource-collector:
+    build:
+      context: ./backend
+
+    container_name: cloudpilot-human-resource-collector
+
+    command: python -m app.human_resource_collector
+
+    env_file:
+      - ./secrets/backend-db.env
+
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_SDK_LOAD_CONFIG: "1"
+      AWS_CONFIG_FILE: /home/appuser/.aws/config
+      CLOUDTRAIL_DATA_DIR: /app/cloudtrail-data
+      CLOUDTRAIL_REGIONS: ap-northeast-1,ap-northeast-2,ap-northeast-3,ap-south-1,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-north-1,eu-west-1,eu-west-2,eu-west-3,sa-east-1,us-east-1,us-east-2,us-west-1,us-west-2
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    volumes:
+      - ${HOME}/.aws/config:/home/appuser/.aws/config:ro
+      - ${HOME}/.aws/sso/cache:/home/appuser/.aws/sso/cache:rw
+      - ./data/cloudtrail:/app/cloudtrail-data
+
+    restart: unless-stopped

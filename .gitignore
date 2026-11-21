@@ -1,0 +1,30 @@
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+
+# Backups
+*.backup
+*.backup*
+*.before_*
+backups/
+
+# Runtime data
+data/
+logs/
+
+# OS files
+.DS_Store

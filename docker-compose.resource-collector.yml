@@ -1,0 +1,29 @@
+services:
+  resource-collector:
+    build:
+      context: ./backend
+
+    container_name: cloudpilot-resource-collector
+
+    command: python -m app.resource_collector
+
+    env_file:
+      - ./secrets/backend-db.env
+
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_SDK_LOAD_CONFIG: "1"
+      AWS_CONFIG_FILE: /home/appuser/.aws/config
+      CLOUDTRAIL_DATA_DIR: /app/cloudtrail-data
+      CLOUDTRAIL_REGIONS: us-east-1
+      COLLECT_INTERVAL_SECONDS: "300"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    volumes:
+      - ${HOME}/.aws/config:/home/appuser/.aws/config:ro
+      - ${HOME}/.aws/sso/cache:/home/appuser/.aws/sso/cache:rw
+      - ./data/cloudtrail:/app/cloudtrail-data
+
+    restart: unless-stopped
