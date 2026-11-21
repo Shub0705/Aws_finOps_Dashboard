@@ -1,105 +1,86 @@
 ☁️ AWS FinOps Dashboard
+Cloud Cost Management | Resource Monitoring | Infrastructure Visibility
 
-<p align="center">
-<strong>Cloud Cost Management • Resource Monitoring • Infrastructure Visibility</strong>
-</p>
-
-<p align="center">
-A centralized AWS FinOps platform designed to monitor cloud resources, track infrastructure usage, and improve cloud cost visibility.
-</p>
+A centralized AWS FinOps platform for monitoring cloud infrastructure, tracking resources, and improving cloud cost visibility.
 
 📌 Overview
 
-The AWS FinOps Dashboard is a cloud financial management application that brings infrastructure monitoring and cost visibility into one centralized platform.
+AWS FinOps Dashboard is a cloud financial management application designed to bring cloud resource monitoring and cost management into one centralized platform.
 
-The application combines a React frontend, FastAPI backend, PostgreSQL database, and independent Dockerized collectors to support cloud resource tracking and cost management.
-
-Key Capabilities
-Cloud Cost Management – Organize and manage cloud cost information.
-Resource Tracking – Monitor infrastructure resources and their usage.
-Resource Collection – Collect AWS resource information through dedicated services.
-Human Resource Collection – Run a separate collector for human-resource-related data.
-Centralized Dashboard – Access application functionality through a React interface.
-Containerized Deployment – Run backend services using Docker Compose.
+Key Features
+☁️ Cloud Cost Management – Manage and monitor cloud cost information.
+📊 Resource Tracking – Track infrastructure resources and usage.
+🔍 AWS Resource Collection – Collect AWS infrastructure information.
+👥 Human Resource Collection – Dedicated human resource collection service.
+🐳 Containerized Architecture – Independent services managed through Docker Compose.
+🔐 Security Scanning – Vulnerability and configuration scanning using Trivy.
 🏗️ System Architecture
 
-The following diagram illustrates the application's high-level architecture.
+The following diagram represents the high-level application architecture.
 
 mermaid
 flowchart TB
-    USER(["👤 User"])
+    U(["👤 User"])
 
-    subgraph FRONTEND["Frontend Layer"]
-        REACT["React + Vite Dashboard"]
+    subgraph UI["Frontend"]
+        FE["React + Vite Dashboard"]
     end
 
-    subgraph BACKEND["Application Layer"]
+    subgraph APP["Backend Application"]
         API["FastAPI Backend"]
-        RESOURCE["Resource Tracking Router"]
-        COST["Cost Management Module"]
+        RT["Resource Tracking"]
+        CM["Cost Management"]
     end
 
-    subgraph COLLECTORS["Collection Services"]
-        RC["AWS Resource Collector"]
+    subgraph SERVICES["Background Services"]
+        RC["Resource Collector"]
         HRC["Human Resource Collector"]
-        MRC["Multiservice Collector"]
+        MSC["Multiservice Collector"]
     end
 
-    subgraph DATABASE["Data Layer"]
-        DB[("PostgreSQL 16")]
-    end
+    DB[("PostgreSQL 16")]
+    AWS["☁️ AWS Cloud"]
 
-    AWS["☁️ AWS Cloud Services"]
-
-    USER --> REACT
-    REACT --> API
-
-    API --> RESOURCE
-    API --> COST
-
-    RESOURCE --> DB
-    COST --> DB
+    U --> FE
+    FE --> API
+    API --> RT
+    API --> CM
+    RT --> DB
+    CM --> DB
 
     RC --> AWS
     HRC --> AWS
-    MRC --> AWS
+    MSC --> AWS
 
-    RC -.-> DB
-    HRC -.-> DB
-    MRC -.-> DB
-
-    classDef frontend fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
-    classDef backend fill:#dcfce7,stroke:#16a34a,color:#14532d
-    classDef database fill:#fef3c7,stroke:#d97706,color:#78350f
-    classDef collector fill:#f3e8ff,stroke:#9333ea,color:#581c87
-
-    class REACT frontend
-    class API,RESOURCE,COST backend
-    class DB database
-    class RC,HRC,MRC collector
-
-
-Note: This is a conceptual architecture. Actual collector-to-database connections and data flows should be confirmed against the implementation.
+    style FE fill:#2563eb,color:#fff,stroke:#1d4ed8
+    style API fill:#15803d,color:#fff,stroke:#166534
+    style DB fill:#d97706,color:#fff,stroke:#b45309
+    style AWS fill:#ea580c,color:#fff,stroke:#c2410c
+    style RC fill:#7c3aed,color:#fff
+    style HRC fill:#7c3aed,color:#fff
+    style MSC fill:#7c3aed,color:#fff
 
 🔄 Application Workflow
-Step	Component	Responsibility
-01	React Frontend	User interaction and dashboard interface
-02	FastAPI Backend	API requests and application logic
-03	Resource Tracking	Resource tracking operations
-04	Cost Management	Cloud cost-related operations
-05	Resource Collectors	AWS resource data collection
-06	PostgreSQL	Persistent application data storage
+Layer	Component	Description
+01	React Frontend	User interface and dashboard
+02	FastAPI Backend	API and business logic
+03	Resource Tracking	Infrastructure resource tracking
+04	Cost Management	Cloud cost management
+05	Collectors	Background resource collection
+06	PostgreSQL	Persistent data storage
 🛠️ Technology Stack
-Layer	Technology
-Frontend	React, Vite, JavaScript
-Backend	Python, FastAPI
-API Server	Uvicorn
-Database	PostgreSQL 16
-Containerization	Docker
-Orchestration	Docker Compose
-Cloud Platform	Amazon Web Services
-Security Scanner	Trivy
-Version Control	Git & GitHub
+Technology	Purpose
+React	Frontend framework
+Vite	Frontend build tool
+Python	Backend programming
+FastAPI	REST API framework
+Uvicorn	Application server
+PostgreSQL 16	Database
+Docker	Containerization
+Docker Compose	Service orchestration
+AWS	Cloud infrastructure
+Trivy	Security scanning
+Git & GitHub	Version control
 📂 Project Structure
 text
 aws-finops-dashboard/
@@ -107,14 +88,7 @@ aws-finops-dashboard/
 ├── backend/
 │   ├── app/
 │   │   ├── cost_management/
-│   │   │   ├── database.py
-│   │   │   ├── models.py
-│   │   │   ├── pricing_importer.py
-│   │   │   └── router.py
-│   │   │
 │   │   ├── routes/
-│   │   │   └── resource_tracking.py
-│   │   │
 │   │   ├── main.py
 │   │   ├── resource_collector.py
 │   │   ├── human_resource_collector.py
@@ -127,9 +101,6 @@ aws-finops-dashboard/
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
 │   ├── package.json
 │   └── vite.config.js
 │
@@ -143,91 +114,70 @@ aws-finops-dashboard/
 └── README.md
 
 🐳 Docker Deployment
-
-The application uses multiple Docker Compose configurations to manage individual services.
-
-Start the main backend
+Start Backend
 bash
 docker compose up -d --build
 
-Start individual services
+Start Resource Collector
 bash
 docker compose -f docker-compose.resource-collector.yml up -d --build
 
+Start Human Resource Collector
+bash
 docker compose -f docker-compose.human-resource.yml up -d --build
 
-docker compose -f docker-compose.multiservice.yml up -d --build
-
-docker compose -f docker-compose.cost-management.yml up -d
-
-Monitor running containers
+Check Running Containers
 bash
 docker ps
 
-Check service status
-bash
-docker compose ps
-
-View application logs
+View Application Logs
 bash
 docker compose logs -f
 
 🔐 Security & Vulnerability Scanning
 
-The project uses Trivy to identify vulnerabilities and security configuration issues.
+This project uses Trivy for security analysis.
 
-Filesystem Security Scan
+Scan Project Filesystem
 bash
 trivy fs --scanners vuln,misconfig,secret .
 
-Backend Security Scan
+Scan Backend
 bash
 trivy fs --scanners vuln,misconfig,secret backend/
 
-Docker Image Scan
+Scan Docker Image
 bash
 trivy image aws-finops-dashboard-backend
 
-Generate JSON Security Report
+Generate Security Report
 bash
 trivy fs --scanners vuln,misconfig,secret \
   --format json \
   --output trivy-report.json .
 
-🚀 Current Deployment
-
-The following services have been observed running in the Docker environment:
-
-Container	Service	Port
-finops-backend	Backend API	8002
-finops-backend-resource-test	Resource Test API	8003 (localhost only)
-cloudpilot-cost-db	PostgreSQL	5433
-cloudpilot-resource-collector	Resource Collector	Internal 8000
-cloudpilot-human-resource-collector	Human Resource Collector	Internal 8000
-
-Container status and port mappings should be refreshed after deployment changes.
-
-📈 Project Goals
-Improve AWS cloud cost visibility.
-Centralize infrastructure resource information.
-Support modular cloud data collection.
-Simplify cloud resource monitoring.
-Improve application security and deployment practices.
+🚀 Deployment Information
+Service	Container Port	Host Port
+Backend API	8000	8002
+Resource Test API	8000	8003 (localhost)
+PostgreSQL	5432	5433
+Resource Collector	8000	Internal
+Human Resource Collector	8000	Internal
 🔮 Future Enhancements
 Advanced cloud cost analytics.
 Automated cost optimization recommendations.
+Infrastructure monitoring and alerting.
 Cloud resource inventory reporting.
 Security and compliance dashboards.
-Infrastructure monitoring and alerting.
-CI/CD integration with automated security scanning.
-👨‍💻 Development
+CI/CD pipeline integration.
+📌 Project Status
 
-This project is actively being developed.
-
-Repository: AWS FinOps Dashboard
-
-Status: Development in Progress
+Development in Progress
 
 <p align="center">
-<strong>Built to improve cloud visibility, cost awareness, and infrastructure management.</strong>
+AWS FinOps Dashboard
+</p>
+
+<p align="center">
+Cloud Visibility • Cost Optimization • Infrastructure Management
 </p>
